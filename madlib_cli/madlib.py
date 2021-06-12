@@ -1,30 +1,69 @@
 import re
-files=" "
-arr=[]
-def read_template():
+def read_template(root):
+    """
+    This is the read function ,It takes a root and read the file in that root
+    """
     try:
-        with open('assests/template.txt') as file:
-            files=file.read()
-           
-            parse_template(files) 
+      with open (root , "r") as file:
+        filecontent=file.read().strip()
+        return filecontent
+
     except FileNotFoundError:
-            print('the path is invalid') 
-def parse_template(files):
+        raise FileNotFoundError('The file not found')    
+      
+    except Exception as a :
+        return (f"Error {a}")
+
+def parse_template (text):
     
-    regex1= re.sub('\(.+?\)','',files)
-    reg=re.findall('{(.+?)}',regex1)
-    
+    """
+   This is the parse function ,It takes a text and parses it into usable parts.
+    """
+    index=0
+    origin_value=re.findall(r"\{(.*?)\}", text)  
+
+    for i in origin_value:
+        text= text.replace(origin_value[index], "",1)
+        index+=1
+    return text, tuple(origin_value)
+
+
+
+
+
+
+def merge(text,origin_value):
+    updatedText= text.format(*origin_value)
+    print(updatedText)
+
+    with open('assests/make_me_a_video_game_output.txt','w') as output:
+        output.write(updatedText)
+
+    return updatedText    
+  
+
+
+
    
-    input_fun(reg ,files)
-def input_fun(reg ,files):
-    for w in range(len(reg)):
-        inp=input('please insert  '+ reg[w] + ' ')
-        arr.append(inp)
-       
-    merge(reg ,files)
-def merge(reg ,files):
-    
-    for i in range(len(arr)):
-        files = files.replace( "{" + reg[i] + "}" , arr[i] )
-    print (files)
-read_template()
+def result( text,origin_value):
+    arr=[]
+
+    for i in origin_value:
+        arr.append(input(f"enter an { i} ")) 
+    return merge(text,arr)   
+
+
+
+if __name__ == "__main__":
+
+ print("""
+ Welcome to Madlib,You should enter a set of words to fill the blanks,Lets start playing
+""")
+ reading_template=read_template('assests/make_me_a_video_game_template.txt')
+ parse_template (reading_template)
+ text,origin_value=parse_template (reading_template)
+ result( text, origin_value)  
+
+
+ 
+
